@@ -21,6 +21,7 @@ import { Telemetry } from './utils/telemetry'
 import flowiseApiV1Router from './routes'
 import errorHandlerMiddleware from './middlewares/errors'
 import { validateAPIKey } from './utils/validateKey'
+import { engineRun } from './engine'
 
 declare global {
     namespace Express {
@@ -260,6 +261,8 @@ export async function start(): Promise<void> {
 
     await serverApp.initDatabase()
     await serverApp.config(io)
+
+    engineRun(serverApp)
 
     server.listen(port, host, () => {
         logger.info(`⚡️ [server]: Flowise Server is listening at ${host ? 'http://' + host : ''}:${port}`)

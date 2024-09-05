@@ -203,6 +203,15 @@ export const utilBuildChatflow = async (req: Request, socketIO?: Server, isInter
         // Get prepend messages
         const prependMessages = incomingInput.history
 
+        /*  
+            当所有以下条件满足时，重用流程以避免重新构建（从而防止重复插入、重新计算和重新初始化内存）：
+        * - 未禁用流程的重用
+        * - 节点数据已经存在于池中
+        * - 仍然同步（即自那之后流程未被修改）
+        * - 现有的覆盖配置（overrideConfig）和新的覆盖配置相同
+        * - 现有的聊天ID（chatId）和新的聊天ID相同
+        * - 流程不以依赖于incomingInput.question的节点开始或包含这样的节点
+        */
         /*   Reuse the flow without having to rebuild (to avoid duplicated upsert, recomputation, reinitialization of memory) when all these conditions met:
          * - Reuse of flows is not disabled
          * - Node Data already exists in pool
